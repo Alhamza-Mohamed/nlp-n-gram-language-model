@@ -1,3 +1,20 @@
+<style>
+/* General note styling */  
+  body {
+    font-size: 130%;
+  }
+
+    img {
+    display: block;
+    margin: 20px auto;
+    max-width: 70%;
+    }
+
+    .math {
+    text-align: center;
+}
+</style>
+
 # N-gram language model  
 
 **Naive bayes asks:**  
@@ -7,6 +24,29 @@ P(Word | class)
 **N-gram asks:**  
  given the previous word(s) how likely is the next word?  
 P(word_t | word_{t-1}, word_{t-2}, ...)  
+
+## Table of contents
+
+- [N-gram language model](#n-gram-language-model)
+  - [Table of contents](#table-of-contents)
+  - [Phase 1: Dataset \& Tokenization](#phase-1-dataset--tokenization)
+  - [Phase 2: vocabulary](#phase-2-vocabulary)
+    - [Vocabulary size vs corpus size](#vocabulary-size-vs-corpus-size)
+  - [Phase 3: Unigram](#phase-3-unigram)
+  - [Phase 4: N-grams function](#phase-4-n-grams-function)
+    - [N-gram probabilities](#n-gram-probabilities)
+  - [Phase 5: Bigrams](#phase-5-bigrams)
+  - [Phase 6: Sentence Scoring](#phase-6-sentence-scoring)
+    - [Why Log Probabilities?](#why-log-probabilities)
+  - [Phase 7: Smoothing](#phase-7-smoothing)
+- [P(w\_i \\mid w\_{i-1})](#pw_i-mid-w_i-1)
+    - [Why Does the Smoothing Algorithm Change?](#why-does-the-smoothing-algorithm-change)
+    - [Analogy: Rolling a Die](#analogy-rolling-a-die)
+    - [How Many Probabilities Does the Model Contain?](#how-many-probabilities-does-the-model-contain)
+    - [Why Does the Denominator Change?](#why-does-the-denominator-change)
+- [P(w\_i \\mid w\_{i-1})](#pw_i-mid-w_i-1-1)
+    - [Summary](#summary)
+
 
 ## Phase 1: Dataset & Tokenization
 
