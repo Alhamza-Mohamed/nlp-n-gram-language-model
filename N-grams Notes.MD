@@ -39,12 +39,10 @@ P(word_t | word_{t-1}, word_{t-2}, ...)
   - [Phase 6: Sentence Scoring](#phase-6-sentence-scoring)
     - [Why Log Probabilities?](#why-log-probabilities)
   - [Phase 7: Smoothing](#phase-7-smoothing)
-- [P(w\_i \\mid w\_{i-1})](#pw_i-mid-w_i-1)
     - [Why Does the Smoothing Algorithm Change?](#why-does-the-smoothing-algorithm-change)
     - [Analogy: Rolling a Die](#analogy-rolling-a-die)
     - [How Many Probabilities Does the Model Contain?](#how-many-probabilities-does-the-model-contain)
     - [Why Does the Denominator Change?](#why-does-the-denominator-change)
-- [P(w\_i \\mid w\_{i-1})](#pw_i-mid-w_i-1-1)
     - [Summary](#summary)
 
 
@@ -260,10 +258,7 @@ Smoothing is a technique that assigns a small non-zero probability to unseen n-g
 Laplace smoothing:
 
 $$
-P(w_i \mid w_{i-1})
-=
-\frac{\operatorname{Count}(w_{i-1},w_i)+k}
-{\operatorname{Count}(w_{i-1})+kV}
+P(w_i \mid w_{i-1}) = \frac{\operatorname{Count}(w_{i-1},w_i)+k} {\operatorname{Count}(w_{i-1})+kV}
 $$
 
 where:
@@ -564,10 +559,7 @@ Therefore, the denominator must also increase by **kV** to keep the conditional 
 The smoothed probability becomes
 
 $$
-P(w_i \mid w_{i-1})
-=
-\frac{\operatorname{Count}(w_{i-1},w_i)+k}
-{\operatorname{Count}(w_{i-1})+kV}
+P(w_i \mid w_{i-1}) = \frac{\operatorname{Count}(w_{i-1},w_i)+k}{\operatorname{Count}(w_{i-1})+kV}
 $$
 
 where:
