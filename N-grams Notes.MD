@@ -44,6 +44,7 @@ P(word_t | word_{t-1}, word_{t-2}, ...)
     - [How Many Probabilities Does the Model Contain?](#how-many-probabilities-does-the-model-contain)
     - [Why Does the Denominator Change?](#why-does-the-denominator-change)
     - [Summary](#summary)
+    - [Why Are Sentence Boundary Tokens Important?](#why-are-sentence-boundary-tokens-important)
 
 
 ## Phase 1: Dataset & Tokenization
@@ -586,4 +587,122 @@ Without increasing the denominator, the conditional probabilities would no longe
 - Iterates over every possible n-gram that can be formed from the vocabulary.
 - Assigns a small non-zero probability to unseen events.
 - Stores probabilities for every possible bigram (\(V^2\) possible bigram probabilities).
-- Preserves a valid probability distribution by increasing the denominator by \(kV\).
+- Preserves a valid probability distribution by increasing the denominator by \(kV\).  
+
+---
+
+### Why Are Sentence Boundary Tokens Important?
+
+While implementing Laplace smoothing, an important subtlety appeared regarding the denominator of the bigram probability.  
+
+The MLE and Laplace formulas use:
+
+$$
+\operatorname{Count}(w_{i-1})
+$$
+
+In the denominator: 
+
+$$
+P(w_i \mid w_{i-1}) = \frac{\operatorname{Count}(w_{i-1},w_i)+k} {\operatorname{Count}(w_{i-1})+kV}
+$$  
+
+At first it seems natural to use the unigrams counts computed by `count_unigrams()` because they store how many times each word appears in the corpus.  
+
+However, the denominator actually represents a slightly different quantity:
+> **The number of times the previous word appeared as the context of a bigram.**  
+
+These two counts are not always the same.  
+
+<br>  
+
+**Example without sentence boundary tokens**  
+
+suppose the corpus contains
+
+```text
+I love learning
+```
+
+The unigram counts are  
+
+```text
+I         -> 1
+love      -> 1
+learning  -> 1
+```
+
+The observed bigrams are 
+
+```text
+(I, love)
+(love, learning)
+```
+
+Notice that "learning" never appears as the previous word of a bigram because it is the final word of the sentence.  
+
+Therefore, the context counts are:
+
+```text
+I         -> 1
+love      -> 1
+learning  -> 0
+```
+
+This creates a mismatch:
+
+| Word | Unigram Count | Context Count |
+|------|--------------:|--------------:|
+| I | 1 | 1 |
+| love | 1 | 1 |
+| learning | 1 | 0 |  
+
+The function `count_unigrams` is not wrong in correctly counts word occurrence.  
+
+The problem that  its output does not exactly match the quantity required by denominator.  
+
+**Adding Sentence Boundary Tokens**  
+
+Now consider the same sentence after adding sentence boundary tokens:
+
+```text
+<s> I love learning </s>
+```
+
+The observed bigrams become
+
+```text
+(<s>, I)
+(I, love)
+(love, learning)
+(learning, </s>)
+```
+
+Now every real word appear as the previous word of a bigram exactly as many times as it appeared in the corpus.  
+
+```text
+<s>       -> 1
+I         -> 1
+love      -> 1
+learning  -> 1
+</s>      -> 1
+```
+Therefore, 
+
+$$
+\operatorname{Count}(w)=\operatorname{Count}(\text{word } w \text{ used as a previous word})
+$$
+
+for every real vocabulary word.
+
+As a result, the unigram counts can be safely used as the denominator in the bigram probability formula.  
+
+**summary**  
+
+The function `count_unigrams()` was never mathematically incorrect.
+
+The issue was assuming that **word occurrence counts** were always identical to **context counts**.
+
+Adding the sentence boundary token `</s>` makes these two quantities equivalent, allowing the unigram counts to be used directly in the denominator of the bigram probability formula.  
+
+
