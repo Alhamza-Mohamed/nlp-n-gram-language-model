@@ -45,6 +45,7 @@ P(word_t | word_{t-1}, word_{t-2}, ...)
     - [Why Does the Denominator Change?](#why-does-the-denominator-change)
     - [Summary](#summary)
     - [Why Are Sentence Boundary Tokens Important?](#why-are-sentence-boundary-tokens-important)
+  - [Phase 8: Next word prediction](#phase-8-next-word-prediction)
 
 
 ## Phase 1: Dataset & Tokenization
@@ -705,4 +706,14 @@ The issue was assuming that **word occurrence counts** were always identical to 
 
 Adding the sentence boundary token `</s>` makes these two quantities equivalent, allowing the unigram counts to be used directly in the denominator of the bigram probability formula.  
 
+## Phase 8: Next word prediction
 
+Given a sequence of words (the context), predict the most likely next word according to the trained language model.  
+
+**Algorithm**  
+
+1. Receive the previous word.
+2. Iterate over every possible next word in the vocabulary.
+3. Retrieve the Probability of each bigram.
+4. Keep track of the highest probability seen so far.
+5. Return  the corresponding word.
