@@ -46,6 +46,7 @@ P(word_t | word_{t-1}, word_{t-2}, ...)
     - [Summary](#summary)
     - [Why Are Sentence Boundary Tokens Important?](#why-are-sentence-boundary-tokens-important)
   - [Phase 8: Next word prediction](#phase-8-next-word-prediction)
+  - [Phase 9: Perplexity](#phase-9-perplexity)
 
 
 ## Phase 1: Dataset & Tokenization
@@ -717,3 +718,52 @@ Given a sequence of words (the context), predict the most likely next word accor
 3. Retrieve the Probability of each bigram.
 4. Keep track of the highest probability seen so far.
 5. Return  the corresponding word.
+
+## Phase 9: Perplexity
+
+Consider having 2 test sentences:  
+sentences A "I love NLP." and suppose the n-gram model assign log probability = -3.5  
+
+sentences B "I really love studying natural language processing." and suppose the same n-gram model assign log probability = -9.8  
+
+If we only look at the log probabilities we could say:
+> "-3.5 is greater than -9.8, therefore Sentence A is much more probable"
+
+This is not a fair conclusion because Sentence A has 3 words while sentence B has 7 words.  
+
+Every additional bigram contributes another negative log probability.  
+
+The longer the sentence the lower the probability as you multiplying more probabilities (or equivalently, adding more negative log probabilities).
+
+For example, imagine the model assigns a probability of 0.5 to every bigram. A short sentence (3 bigrams):
+>  0.5 × 0.5 × 0.5= 0.125
+
+A longer sentence (8 bigrams):
+> $0.5^8 = 0.00390625$  
+
+The second probability is much smaller, not because the sentence is words, but because there is more multiplications.  
+
+The same thing happens with log probabilities:  
+Three bigrams: 3 × log(0.5) = -2.079  
+Eight bigrams: 8 × log(0.5) = -5.544  
+
+The total becomes more negative simply because there are more terms.  
+
+**What we should compare instead?**  
+
+This is the key idea behind perplexity.  
+Instead of comparing the total log probabilities, we compare the average log probability per predicted word.  
+
+Suppose 2 students take different exams where:
+Student A had 30 question and answered 24 correct.  
+Student B had 100 question and answered 80 correct.  
+
+Comparing them by saying "80 is greater than 24, therefore student B is better" is wrong.  
+
+We would normalize by number of questions:
+
+$24/30 = 80%$  
+$80/100 = 80%$  
+
+Now the comparison is fair.  
+Perplexity does exactly the same kind of normalization for language models.  
