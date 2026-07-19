@@ -721,6 +721,8 @@ Given a sequence of words (the context), predict the most likely next word accor
 
 ## Phase 9: Perplexity
 
+Perplexity metric is a way to capture the degree of uncertainty a model has in predicting text.  
+
 Consider having 2 test sentences:  
 sentences A "I love NLP." and suppose the n-gram model assign log probability = -3.5  
 
@@ -767,3 +769,62 @@ $80/100 = 80%$
 
 Now the comparison is fair.  
 Perplexity does exactly the same kind of normalization for language models.  
+
+**First step:**  
+
+$$ 
+\text{Average Log Probability} = \frac{\text{log P (sentence)}}{N}
+$$
+
+Where N is the number of predicted words (the number of bigrams).  
+
+In order to inverse the log probability we need to apply power operation.  
+
+if $y = len(x)$,
+then $x = e^y$  
+
+Lets connect the pieces:
+
+1. Total log probability
+$$\text{log P (sentence)} $$
+
+2. Normalize by sentence length
+$$\frac{\text{log P (sentence)}}{N}$$
+
+3. undo the logarithm
+$$e^{\frac{\text{log P (sentence)}}{N}}$$  
+
+At this point, we have recovered the geometric mean probability of predicting one word
+
+$$\text{Perplexity} = e^ {-\frac{\text{log P (sentence)}}{N}}$$  
+
+The minus sign is because log probabilities are negative (since probabilities are between 0 and 1).  
+
+Without the minus sign:
+
+- Better models would produce larger values (closer to 1).
+- Worse models would produce smaller values (closer to 0).
+
+That is mathematically fine but researchers wanted a metric where:
+
+- Lower is better.
+- A perfect model has perplexity 1.
+- Increasing uncertainty increases the metric.
+
+Suppose the average log probability = - 0.1  
+
+Then
+
+$$
+PP = e^{-(-0.1)} ≈1.105
+$$
+
+Very close to 1, which indicates a confident model.
+
+Now suppose the average log probability = - 2.0  
+
+$$
+PP = e^{-(-2.0)} ≈7.39
+$$
+
+Much larger perplexity, indicating the model is much more uncertain.  
